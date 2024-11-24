@@ -5,3 +5,18 @@
 1732460448 d:\20241\project1\domin\main.h
 	<iostream>
 
+1732460893 source:d:\20241\project1\domin\functions.cpp
+	"functions.h"
+	"main.h"
+
+1732460597 d:\20241\project1\domin\functions.h
+
+1732463279 source:d:\20241\project1\domin\console.cpp
+	"Console.h"
+
+1732463294 d:\20241\project1\domin\console.h
+	<iostream>
+	<Windows.h>
+	<Shlwapi.h>
+	<conio.h>
+

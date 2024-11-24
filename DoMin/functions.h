@@ -4,3 +4,6 @@
 
 void taoMang2ChieuDong();
 void xoaMang2ChieuDong();
+void khoiTao(short SDong, short SCot, SSoBom);
+void veO(short SX, short SY, short SKieu);
+void veBang();
