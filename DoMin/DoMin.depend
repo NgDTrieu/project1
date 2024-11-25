@@ -1,15 +1,18 @@
 # depslib dependency file v1.0
-1732460288 source:d:\20241\project1\domin\main.cpp
+1732497999 source:d:\20241\project1\domin\main.cpp
 	"main.h"
+	"Console.h"
+	"functions.h"
 
 1732460448 d:\20241\project1\domin\main.h
 	<iostream>
 
-1732460893 source:d:\20241\project1\domin\functions.cpp
+1732498198 source:d:\20241\project1\domin\functions.cpp
 	"functions.h"
 	"main.h"
+	"Console.h"
 
-1732460597 d:\20241\project1\domin\functions.h
+1732498084 d:\20241\project1\domin\functions.h
 
 1732463279 source:d:\20241\project1\domin\console.cpp
 	"Console.h"

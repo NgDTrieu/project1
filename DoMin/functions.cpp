@@ -16,7 +16,7 @@ void xoaMang2ChieuDong(){
     delete[] CTO;
 }
 
-void khoiTao(short SDong, short SCot, SSoBom){
+void khoiTao(short SDong, short SCot, short SSoBom){
     CTBang.SDong = SDong;
     CTBang.SCot = SCot;
     CTBang.SSoBom = SSoBom;
@@ -24,16 +24,15 @@ void khoiTao(short SDong, short SCot, SSoBom){
     CTBang.SSoCo = 0;
 
     taoMang2ChieuDong();
-
-
+    veBang();
     xoaMang2ChieuDong();
 }
 
-short toaDoX(short SX) return (SX * 2);
-short toaDoY(short SY) return (SY);
+short toaDoX(short SX){ return (SX * 2); }
+short toaDoY(short SY){ return (SY); }
 
 void veO(short SX, short SY, short SKieu){
-    switch (Skieu)
+    switch (SKieu)
     {
     case 0:        //O mau xanh la
         setColorBGTextXY(toaDoX(SX), toaDoY(SY), 0, 10, "  ");
@@ -87,8 +86,9 @@ void veO(short SX, short SY, short SKieu){
 }
 void veBang(){
     for (int i = 0; i < CTBang.SDong; ++i){
-        for (int i = 0; i < CTBang.SCot; j++){
-            veO(j, i, 1);
+        for (int j = 0; j < CTBang.SCot; ++j){
+            if ((i + j) % 2) veO(j, i, 11);
+            else veO(j, i, 10);
         }
     }
 }
