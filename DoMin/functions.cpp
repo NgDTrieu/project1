@@ -31,7 +31,7 @@ void khoiTao(short SDong, short SCot, short SSoBom){
     veBang();
     taoBomNgauNhien();
     //xuatBom();
-    xoaMang2ChieuDong();
+    //xoaMang2ChieuDong();
 }
 
 short toaDoX(short SX){ return (SX * 2); }
@@ -94,8 +94,11 @@ void veBang(){
     for (int i = 0; i < CTBang.SDong; ++i){
         for (int j = 0; j < CTBang.SCot; ++j){
 
-            if(CTO[i][j].BCamCo) veO(j, i, 13);
-            if ((i + j) % 2) veO(j, i, 11);
+
+            if (CTO[i][j].BCamCo) veO(j, i, 13);
+            else if(CTO[i][j].SBomLanCan) veO(j, i, CTO[i][j].SBomLanCan);
+            else if(CTO[i][j].BDaMo) veO(j, i, 0);
+            else if ((i + j) % 2) veO(j, i, 11);
             else veO(j, i, 10);
 
             if(BSuDungPhim){
@@ -143,6 +146,52 @@ void clickPhai(short SX, short SY){ //CamCo
     veBang();
 }
 
+short demBomLanCan(short SX, short SY){
+    short SDem = 0;
+    for (int i = SX - 1; i <= SX + 1; ++i){
+        for (int j = SY - 1; j <= SY + 1; ++j){
+            if(i < 0 || i >= CTBang.SDong || j < 0 || j >= CTBang.SCot || (i == SX && j == SY))
+                continue;
+            if(CTO[i][j].BCoBom) ++SDem;
+        }
+    }
+    return SDem;
+}
+
+void moO(short SX, short SY){
+    if(!CTO[SX][SY].BDaMo && !CTO[SX][SY].BCamCo){
+        CTO[SX][SY].BDaMo = true;
+        if(CTO[SX][SY].BCoBom){
+            exit(0);
+        }
+        else{
+            CTBang.SSoODaMo++;
+            short SSoBomLanCan = demBomLanCan(SX, SY);
+            if(SSoBomLanCan){
+                CTO[SX][SY].SBomLanCan = SSoBomLanCan;
+            }
+            else{
+                for (int i = SX - 1; i <= SX + 1; ++i){
+                    for (int j = SY - 1; j <= SY + 1; ++j){
+                        if(i < 0 || i >= CTBang.SDong || j < 0 || j >= CTBang.SCot || (i == SX && j == SY))
+                            continue;
+
+                        //goi de quy
+                        moO(i,j);
+                    }
+                }
+            }
+        }
+    }
+}
+
+void clickTrai(short SX, short SY){
+    if(!CTO[SX][SY].BDaMo && !CTO[SX][SY].BCamCo){
+        moO(SX, SY);
+        veBang();
+    }
+}
+
 void xuLyPhim(KEY_EVENT_RECORD key){
     if(key.bKeyDown){
         switch(key.wVirtualKeyCode)
@@ -172,6 +221,7 @@ void xuLyPhim(KEY_EVENT_RECORD key){
         case VK_ESCAPE: //Phim thoat
             break;
         case ClickTrai: //Phim z - Mo o
+            clickTrai(CViTriConTro.Y, CViTriConTro.X);
             break;
         case ClickPhai: //Phim x - Danh dau co
             clickPhai(CViTriConTro.Y,CViTriConTro.X);

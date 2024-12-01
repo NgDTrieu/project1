@@ -6,7 +6,7 @@
 #include <ctime>
 
 #define ClickTrai 0x5A
-#define ClickPhai 0x5B
+#define ClickPhai 0x58
 
 struct CauTrucBang{
     short SDong = 0;
