@@ -3,6 +3,10 @@
 #endif // MAIN_H_INCLUDED
 
 #include <iostream>
+#include <ctime>
+
+#define ClickTrai 0x5A
+#define ClickPhai 0x5B
 
 struct CauTrucBang{
     short SDong = 0;

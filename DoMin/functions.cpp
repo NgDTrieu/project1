@@ -5,6 +5,10 @@
 CauTrucBang CTBang;
 CauTrucO **CTO;
 
+COORD CViTriConTro;
+
+bool BSuDungPhim = false;
+
 void taoMang2ChieuDong(){
     CTO = new CauTrucO*[CTBang.SDong];
     for (int i = 0; i < CTBang.SDong; ++i)
@@ -25,6 +29,8 @@ void khoiTao(short SDong, short SCot, short SSoBom){
 
     taoMang2ChieuDong();
     veBang();
+    taoBomNgauNhien();
+    //xuatBom();
     xoaMang2ChieuDong();
 }
 
@@ -87,8 +93,110 @@ void veO(short SX, short SY, short SKieu){
 void veBang(){
     for (int i = 0; i < CTBang.SDong; ++i){
         for (int j = 0; j < CTBang.SCot; ++j){
+
+            if(CTO[i][j].BCamCo) veO(j, i, 13);
             if ((i + j) % 2) veO(j, i, 11);
             else veO(j, i, 10);
+
+            if(BSuDungPhim){
+                veO(CViTriConTro.X, CViTriConTro.Y, 12);
+            }
+
+
+        }
+    }
+}
+
+void taoBomNgauNhien(){
+    short SSoBom = CTBang.SSoBom;
+    short SI, SJ;                   //SI, SJ la dong, cot chua bom
+    srand(time(NULL));
+    while (SSoBom){
+        SI = rand() % CTBang.SDong;
+        SJ = rand() % CTBang.SCot;
+        if (CTO[SI][SJ].BCoBom) continue;
+        CTO[SI][SJ].BCoBom = true;
+        --SSoBom;
+    }
+}
+
+void xuatBom(){
+    for(int i = 0; i < CTBang.SDong; ++i){
+        for(int j = 0; j < CTBang.SCot; ++j){
+            std::cout << CTO[i][j].BCoBom << " ";
+        }
+        std::cout << std::endl;
+    }
+}
+
+void clickPhai(short SX, short SY){ //CamCo
+    if(!CTO[SX][SY].BDaMo){
+        if(CTO[SX][SY].BCamCo){
+            CTO[SX][SY].BCamCo = false;
+            CTBang.SSoCo--;
+        }
+        else{
+            CTO[SX][SY].BCamCo = true;
+            CTBang.SSoCo++;
+        }
+    }
+    veBang();
+}
+
+void xuLyPhim(KEY_EVENT_RECORD key){
+    if(key.bKeyDown){
+        switch(key.wVirtualKeyCode)
+        {
+        case VK_UP:
+            BSuDungPhim = true;
+            CViTriConTro.Y = ((CViTriConTro.Y == 0) ? CTBang.SDong - 1 : CViTriConTro.Y - 1);
+            veBang();
+            break;
+        case VK_DOWN:
+            BSuDungPhim = true;
+            CViTriConTro.Y = ((CViTriConTro.Y == CTBang.SDong - 1) ? 0 : CViTriConTro.Y + 1);
+            veBang();
+            break;
+        case VK_LEFT:
+            BSuDungPhim = true;
+            CViTriConTro.X = ((CViTriConTro.X == 0) ? CTBang.SCot - 1 : CViTriConTro.X - 1);
+            veBang();
+            break;
+        case VK_RIGHT:
+            BSuDungPhim = true;
+            CViTriConTro.X = ((CViTriConTro.X == CTBang.SCot - 1) ? 0 : CViTriConTro.X + 1);
+            veBang();
+            break;
+        case VK_RETURN: // Phim Enter
+            break;
+        case VK_ESCAPE: //Phim thoat
+            break;
+        case ClickTrai: //Phim z - Mo o
+            break;
+        case ClickPhai: //Phim x - Danh dau co
+            clickPhai(CViTriConTro.Y,CViTriConTro.X);
+            break;
+        }
+    }
+}
+
+void xuLySuKien(){
+    while(1){
+        DWORD DWNumberOfEvents = 0;     // Luu skien hien tai
+        DWORD DWNumberOfEventsRead = 0; // Luu lai so luong su kien da duoc loc
+
+        HANDLE HConsoleInput = GetStdHandle(STD_INPUT_HANDLE);  //Thiet bi dau vao
+        GetNumberOfConsoleInputEvents(HConsoleInput, &DWNumberOfEvents); // Dat su kien dau vao cua giao dien cho bien DWNumberOfEvents
+
+        if (DWNumberOfEvents){
+            INPUT_RECORD *IREventBuffer = new INPUT_RECORD[DWNumberOfEvents];   // Con tro EventBuffer
+            ReadConsoleInput(HConsoleInput, IREventBuffer, DWNumberOfEvents, &DWNumberOfEventsRead); // Dat cac su kien dươc luu vao con tro EventBuffer
+            //Chay vong lap
+            for(DWORD i = 0; i < DWNumberOfEvents; ++i){
+                if(IREventBuffer[i].EventType == KEY_EVENT){
+                    xuLyPhim(IREventBuffer[i].Event.KeyEvent);
+                }
+            }
         }
     }
 }
