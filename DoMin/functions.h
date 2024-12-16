@@ -10,3 +10,12 @@ void veBang();
 void taoBomNgauNhien();
 void xuatBom();
 void xuLySuKien();
+void thang();
+void thua();
+
+
+//design
+void veTieuDeGame();
+void veTrangThaiChoiGame(short STrangThai);
+void veMenuChinh(short SIndex);
+void veMenuCapDo(short SIndex);
