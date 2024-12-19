@@ -18,6 +18,13 @@ short SToaDoY;
 //Cap nhat trang thai choi game
 bool BTrangThaiChoiGame = false;
 
+//Ý tưởng xử lý menu
+//1) Trang menu chính
+//2) Trang menu chọn cấp độ
+//3) Trang choi game
+//4) Trang thua
+//5) Trang thang
+//6) Trang huong dan
 
 void taoMang2ChieuDong(){
     CTO = new CauTrucO*[CTBang.SDong];
@@ -30,7 +37,7 @@ void xoaMang2ChieuDong(){
     delete[] CTO;
 }
 
-void luuToanDoBang(){
+void luuToaDoBang(){       // Điều chỉnh tọa độ để vẽ mảng
     SToaDoX = (ConsoleWidth/2) - CTBang.SDong;
     SToaDoY = ((ConsoleHeight - 6) - (CTBang.SCot))/2 + 4;
 }
@@ -44,14 +51,11 @@ void khoiTao(short SDong, short SCot, short SSoBom){
 
     taoMang2ChieuDong();
     taoBomNgauNhien();
-    luuToanDoBang();
+    luuToaDoBang();
     CViTriConTro = {0, 0};
     BTrangThaiChoiGame = true;
     veBang();
-    veTrangThaiChoiGame(1);
-
-    //xuatBom();
-    //xoaMang2ChieuDong();
+    veTrangThaiChoiGame(1,0,0);
 }
 
 short toaDoX(short SX){ return (SX * 2 + SToaDoX); }
@@ -143,15 +147,6 @@ void taoBomNgauNhien(){
     }
 }
 
-void xuatBom(){
-    for(int i = 0; i < CTBang.SDong; ++i){
-        for(int j = 0; j < CTBang.SCot; ++j){
-            std::cout << CTO[i][j].BCoBom << " ";
-        }
-        std::cout << std::endl;
-    }
-}
-
 void clickPhai(short SX, short SY){ //CamCo
     if(!CTO[SX][SY].BDaMo){
         if(CTO[SX][SY].BCamCo){
@@ -164,6 +159,9 @@ void clickPhai(short SX, short SY){ //CamCo
         }
     }
     veBang();
+
+    deleteRow(4,1);
+    veTrangThaiChoiGame(1,0,0);
 }
 
 short demBomLanCan(short SX, short SY){
@@ -219,6 +217,26 @@ void clickTrai(short SX, short SY){
         }
 
     }
+    else if(CTO[SX][SY].BDaMo){
+        for (int i = SX - 1; i <= SX + 1; ++i){
+            for (int j = SY - 1; j <= SY + 1; ++j){
+                if(i < 0 || i >= CTBang.SDong || j < 0 || j >= CTBang.SCot || (i == SX && j == SY) || CTO[i][j].BCamCo)
+                    continue;
+
+                CTO[i][j].BDaMo = true;
+                if(CTO[i][j].BCoBom){
+                    thua();
+                }
+                else{
+                    CTBang.SSoODaMo++;
+                    short SSoBomLanCan = demBomLanCan(i, j);
+                    if(SSoBomLanCan){
+                        CTO[i][j].SBomLanCan = SSoBomLanCan;
+                    }
+                }
+            }
+        }
+    }
 }
 
 
@@ -226,8 +244,9 @@ void clickTrai(short SX, short SY){
 void thang(){
     BTrangThaiChoiGame = false;
     xoaMang2ChieuDong();
+    STrang = 5;
     deleteRow(4, 1);
-    veTrangThaiChoiGame(2);     // Cap nhat trang thai la thang
+    veTrangThaiChoiGame(2, 2, 1);     // Cap nhat trang thai la thang
 }
 
 void thua(){
@@ -251,8 +270,9 @@ void thua(){
     }
     BTrangThaiChoiGame = false;
     xoaMang2ChieuDong();
+    STrang = 4;
     deleteRow(4,1);
-    veTrangThaiChoiGame(3);     // Cap nhat trang thai thua
+    veTrangThaiChoiGame(3, 3, 0);     // Cap nhat trang thai thua
 }
 
 void xuLyPhim(KEY_EVENT_RECORD key){
@@ -263,7 +283,7 @@ void xuLyPhim(KEY_EVENT_RECORD key){
             switch(STrang)
             {
             case 1: //menu chinh
-                if(STongMuc == 4){
+                if(STongMuc == 3){
                     if(SViTriChon == 0){
                         SViTriChon = STongMuc - 1;
                     }
@@ -292,8 +312,10 @@ void xuLyPhim(KEY_EVENT_RECORD key){
                 }
                 break;
             case 4: // Trang thua
+                veTrangThaiChoiGame(3, 3, (SViTriChon==0) ? 1 : 0);
                 break;
             case 5: // Trang thang
+                veTrangThaiChoiGame(2, 2, (SViTriChon==0) ? 1 : 0);
                 break;
             }
 
@@ -302,7 +324,7 @@ void xuLyPhim(KEY_EVENT_RECORD key){
             switch(STrang)
             {
             case 1: //menu chinh
-                if(STongMuc == 4){
+                if(STongMuc == 3){
                     if(SViTriChon == STongMuc - 1){
                         SViTriChon = 0;
                     }
@@ -331,8 +353,10 @@ void xuLyPhim(KEY_EVENT_RECORD key){
                 }
                 break;
             case 4: // Trang thua
+                veTrangThaiChoiGame(3, 3, (SViTriChon==0) ? 1 : 0);
                 break;
             case 5: // Trang thang
+                veTrangThaiChoiGame(2, 2, (SViTriChon==0) ? 1 : 0);
                 break;
             }
             break;
@@ -360,12 +384,11 @@ void xuLyPhim(KEY_EVENT_RECORD key){
                     veMenuCapDo(0);
                 }
                 else if(SViTriChon == 1){
-
+                    STrang = 6;
+                    deleteRow(4, ConsoleHeight);
+                    veHuongDan();
                 }
                 else if(SViTriChon == 2){
-
-                }
-                else{
                     exit(0);
                 }
                 break;
@@ -393,8 +416,28 @@ void xuLyPhim(KEY_EVENT_RECORD key){
                 }
                 break;
             case 4: // Trang thua
+                if(SViTriChon){
+                    STrang = 1;
+                    deleteRow(3, ConsoleHeight - 3);
+                    veMenuChinh(0);
+                }
+                else{
+                    STrang = 3;
+                    deleteRow(3, ConsoleHeight - 3);
+                    khoiTao(CTBang.SDong, CTBang.SCot, CTBang.SSoBom);
+                }
                 break;
             case 5: // Trang thang
+                if(SViTriChon){
+                    STrang = 1;
+                    deleteRow(3, ConsoleHeight - 3);
+                    veMenuChinh(0);
+                }
+                else{
+                    STrang = 1;
+                    deleteRow(3, ConsoleHeight - 3);
+                    veMenuChinh(0);
+                }
                 break;
             }
             break;
@@ -409,11 +452,27 @@ void xuLyPhim(KEY_EVENT_RECORD key){
                 deleteRow(4,10);
                 veMenuChinh(0);
                 break;
+            case 3:
+                STrang = 2;
+                deleteRow(3, ConsoleHeight - 3);
+                veMenuCapDo(0);
+                break;
             case 4: // Trang thua
+                STrang = 2;
+                deleteRow(3, ConsoleHeight - 3);
+                veMenuCapDo(0);
                 break;
             case 5: // Trang thang
+                STrang = 2;
+                deleteRow(3, ConsoleHeight - 3);
+                veMenuCapDo(0);
                 break;
             }
+            case 6:
+                STrang = 1;
+                deleteRow(4,10);
+                veMenuChinh(0);
+                break;
             break;
         case ClickTrai: //Phim z - Mo o
             clickTrai(CViTriConTro.Y, CViTriConTro.X);
@@ -427,24 +486,23 @@ void xuLyPhim(KEY_EVENT_RECORD key){
 
 
 void xuLySuKien(){
-    while(1){
-        DWORD DWNumberOfEvents = 0;     // số lượng sự kiện đầu vào hiện có trong buffer của bảng điều khiển
-        DWORD DWNumberOfEventsRead = 0; // số lượng sự kiện đầu vào đã được đọc từ buffer của bảng điều khiển
 
-        HANDLE HConsoleInput = GetStdHandle(STD_INPUT_HANDLE);  //Ham Window API, truu tuong hoa tbi dau vao cua bang dieu khien
-        GetNumberOfConsoleInputEvents(HConsoleInput, &DWNumberOfEvents);    //sử dụng HConsoleInput để truy cập và lấy số lượng sự kiện đầu vào đang chờ xử lý
-                                                                            //trong buffer của bảng điều khiển, và lưu vào biến DWNumberOfEvents
+    DWORD DWNumberOfEvents = 0;     // số lượng sự kiện đầu vào hiện có trong buffer của bảng điều khiển
+    DWORD DWNumberOfEventsRead = 0; // số lượng sự kiện đầu vào đã được đọc từ buffer của bảng điều khiển
 
-        if (DWNumberOfEvents){
-            INPUT_RECORD *IREventBuffer = new INPUT_RECORD[DWNumberOfEvents];   // Con tro EventBuffer
-            ReadConsoleInput(HConsoleInput, IREventBuffer, DWNumberOfEvents, &DWNumberOfEventsRead);    //đọc các sự kiện đầu vào từ bảng điều khiển
-                                                                                                        //thông qua HConsoleInput và lưu chúng vào mảng IREventBuffer.
-                                                                                                        //DWNumberOfEventsRead lưu số lượng sự kiện đã đọc được.
-            //Chay vong lap
-            for(DWORD i = 0; i < DWNumberOfEvents; ++i){
-                if(IREventBuffer[i].EventType == KEY_EVENT){
-                    xuLyPhim(IREventBuffer[i].Event.KeyEvent);
-                }
+    HANDLE HConsoleInput = GetStdHandle(STD_INPUT_HANDLE);  //Ham Window API, truu tuong hoa tbi dau vao cua bang dieu khien
+    GetNumberOfConsoleInputEvents(HConsoleInput, &DWNumberOfEvents);    //sử dụng HConsoleInput để truy cập và lấy số lượng sự kiện đầu vào đang chờ xử lý
+                                                                        //trong buffer của bảng điều khiển, và lưu vào biến DWNumberOfEvents
+
+    if (DWNumberOfEvents){
+        INPUT_RECORD *IREventBuffer = new INPUT_RECORD[DWNumberOfEvents];   // Con tro EventBuffer
+        ReadConsoleInput(HConsoleInput, IREventBuffer, DWNumberOfEvents, &DWNumberOfEventsRead);    //đọc các sự kiện đầu vào từ bảng điều khiển
+                                                                                                    //thông qua HConsoleInput và lưu chúng vào mảng IREventBuffer.
+                                                                                                    //DWNumberOfEventsRead lưu số lượng sự kiện đã đọc được.
+        //Chay vong lap
+        for(DWORD i = 0; i < DWNumberOfEvents; ++i){
+            if(IREventBuffer[i].EventType == KEY_EVENT){
+                xuLyPhim(IREventBuffer[i].Event.KeyEvent);
             }
         }
     }
@@ -462,15 +520,44 @@ void veTieuDeGame(){
     }
 }
 
-void veTrangThaiChoiGame(short STrangThai){
+void veTrangThaiChoiGame(short STrangThai, short SCheDo, short SIndex){
+
+    SViTriChon = SIndex;
+    STongMuc = 2;
+
     setColorBGTextXY(1, 3, 15, 0, "Ban Do: %d * %d", CTBang.SDong, CTBang.SCot);
-    setColorBGTextXY(1, 4, 15, 0, "So Bom: %d ", CTBang.SSoBom);
+    setColorBGTextXY(1, 4, 15, 0, "So Bom: %d ", CTBang.SSoBom - CTBang.SSoCo);
+
+
+    //Ve menu thang thua
+    LPSTR STRTextMenuCheDo;
+    if(SCheDo == 1){
+        STRTextMenuCheDo = " Luu lai ";
+        setColorBGTextXY((ConsoleWidth / 2) - (strlen(STRTextMenuCheDo) / 2 + 4), 3, 15, (SIndex == 0) ? 2 : 0, STRTextMenuCheDo);
+    }
+
+    if(SCheDo == 2){
+        STRTextMenuCheDo = " Chuc mung ban da chien thang ";
+        setColorBGTextXY((ConsoleWidth / 2) - (strlen(STRTextMenuCheDo) / 2 + 4), 3, 15, (SIndex == 0) ? 2 : 0, STRTextMenuCheDo);
+    }
+
+    if(SCheDo == 3){
+        STRTextMenuCheDo = " Choi Lai ";
+        setColorBGTextXY((ConsoleWidth / 2) - (strlen(STRTextMenuCheDo) / 2 + 4), 3, 15, (SIndex == 0) ? 2 : 0, STRTextMenuCheDo);
+    }
+
+    if(SCheDo >= 1){
+        STRTextMenuCheDo = " Thoat ";
+        setColorBGTextXY((ConsoleWidth / 2) - (strlen(STRTextMenuCheDo) / 2 + 4), 4, 15, (SIndex == 1) ? 2 : 0, STRTextMenuCheDo);
+    }
+
+    //Ve Trang thai
     if (STrangThai == 1)
         setColorBGTextXY(ConsoleWidth - 22, 4, 15, 0, "Trang Thai: %s ", "Dang Choi");
     if (STrangThai == 2)
         setColorBGTextXY(ConsoleWidth - 22, 4, 15, 0, "Trang Thai: %s ", "Thang");
     if (STrangThai == 3)
-        setColorBGTextXY(ConsoleWidth - 22, 4, 15, 0, "Trang Thai: %s ", "Thua");
+        setColorBGTextXY(ConsoleWidth - 22, 4, 5, 0, "Trang Thai: %s ", "Thua");
     std :: cout << std :: endl;
     setColor(7);
     short i;
@@ -482,21 +569,19 @@ void veTrangThaiChoiGame(short STrangThai){
 void veMenuChinh(short SIndex){
     //Cap nhat lai vi tri dang chon va tong muc cuar menu
     SViTriChon = SIndex;
-    STongMuc = 4;
+    STongMuc = 3;
 
     //Ve menu
     LPSTR STRTextMenuChinh = "  Game Moi  ";
     strlen(STRTextMenuChinh);
     setColorBGTextXY((ConsoleWidth / 2) - (strlen(STRTextMenuChinh) / 2 + 4), 7, 15, (SIndex == 0) ? 2 : 0, STRTextMenuChinh);
 
-    STRTextMenuChinh = "  Bang Diem  ";
+    STRTextMenuChinh = "  Huong dan  ";
     setColorBGTextXY((ConsoleWidth / 2) - (strlen(STRTextMenuChinh) / 2 + 4), 8, 15, (SIndex == 1) ? 2 : 0, STRTextMenuChinh);
 
-    STRTextMenuChinh = "  Thong Tin  ";
+    STRTextMenuChinh = "  Thoat  ";
     setColorBGTextXY((ConsoleWidth / 2) - (strlen(STRTextMenuChinh) / 2 + 4), 9, 15, (SIndex == 2) ? 2 : 0, STRTextMenuChinh);
 
-    STRTextMenuChinh = "  Thoat  ";
-    setColorBGTextXY((ConsoleWidth / 2) - (strlen(STRTextMenuChinh) / 2 + 4), 10, 15, (SIndex == 3) ? 2 : 0, STRTextMenuChinh);
 }
 
 void veMenuCapDo(short SIndex){
@@ -506,7 +591,6 @@ void veMenuCapDo(short SIndex){
 
     //Ve menu
     LPSTR STRTextMenuChinh = "  Chon Cap Do";
-    strlen(STRTextMenuChinh);
     setColorBGTextXY((ConsoleWidth / 2) - (strlen(STRTextMenuChinh) / 2 + 4), 4, 1, 0, STRTextMenuChinh);
 
     STRTextMenuChinh = "  De (Bang 9x9 va 10 boom)";
@@ -520,4 +604,9 @@ void veMenuCapDo(short SIndex){
 
     STRTextMenuChinh = "  Thoat  ";
     setColorBGTextXY((ConsoleWidth / 2) - (strlen(STRTextMenuChinh) / 2 + 4), 10, 15, (SIndex == 3) ? 2 : 0, STRTextMenuChinh);
+}
+
+void veHuongDan(){
+    LPSTR STRTextHuongDan = "  Choi nhu do min ";
+    setColorBGTextXY((ConsoleWidth / 2) - (strlen(STRTextHuongDan) / 2 + 4), 7, 15, 0, STRTextHuongDan);
 }
