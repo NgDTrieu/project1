@@ -220,7 +220,7 @@ void clickTrai(short SX, short SY){
     else if(CTO[SX][SY].BDaMo){
         for (int i = SX - 1; i <= SX + 1; ++i){
             for (int j = SY - 1; j <= SY + 1; ++j){
-                if(i < 0 || i >= CTBang.SDong || j < 0 || j >= CTBang.SCot || (i == SX && j == SY) || CTO[i][j].BCamCo)
+                if(i < 0 || i >= CTBang.SDong || j < 0 || j >= CTBang.SCot || (i == SX && j == SY) || CTO[i][j].BCamCo || CTO[i][j].BDaMo)
                     continue;
 
                 CTO[i][j].BDaMo = true;
@@ -235,6 +235,10 @@ void clickTrai(short SX, short SY){
                     }
                 }
             }
+        }
+        if(BTrangThaiChoiGame){
+            veBang();
+            if(thongKeCo()) thang();
         }
     }
 }
@@ -470,6 +474,7 @@ void xuLyPhim(KEY_EVENT_RECORD key){
             }
             case 6:
                 STrang = 1;
+                veTieuDeGame();
                 deleteRow(4,10);
                 veMenuChinh(0);
                 break;
@@ -607,6 +612,15 @@ void veMenuCapDo(short SIndex){
 }
 
 void veHuongDan(){
-    LPSTR STRTextHuongDan = "  Choi nhu do min ";
+
+    veTieuDeGame();
+
+    LPSTR STRTextHuongDan = "  Nhan cac phim mui ten de di chuyen con tro giua cac o ";
     setColorBGTextXY((ConsoleWidth / 2) - (strlen(STRTextHuongDan) / 2 + 4), 7, 15, 0, STRTextHuongDan);
+    STRTextHuongDan = "  Nhan phim z de mo o dang co con tro ";
+    setColorBGTextXY((ConsoleWidth / 2) - (strlen(STRTextHuongDan) / 2 + 4), 8, 15, 0, STRTextHuongDan);
+    STRTextHuongDan = "  Nhan phim x de cam co o dang co con tro ";
+    setColorBGTextXY((ConsoleWidth / 2) - (strlen(STRTextHuongDan) / 2 + 4), 9, 15, 0, STRTextHuongDan);
+    STRTextHuongDan = "  Moi luc deu co the an esc de thoat ";
+    setColorBGTextXY((ConsoleWidth / 2) - (strlen(STRTextHuongDan) / 2 + 4), 10, 15, 0, STRTextHuongDan);
 }
