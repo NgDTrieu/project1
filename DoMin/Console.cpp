@@ -1,4 +1,5 @@
 #include "Console.h"
+#include <windows.h>
 
 HANDLE hConsoleOutput;
 HANDLE hConsoleInput;

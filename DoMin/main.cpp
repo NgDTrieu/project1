@@ -3,6 +3,7 @@
 #include "functions.h"
 #include <thread>
 #include <chrono>
+#include <unistd.h>
 
 using namespace std;
 
@@ -14,10 +15,14 @@ int main()
     resizeConsole(ConsoleWidth, ConsoleHeight); // Thay đổi kích thước màn hình console
     SetConsoleTitle("Game Do Min"); // Đặt tiêu đề game
     veTieuDeGame();
+
     veMenuChinh(0);
+
     STrang = 1;
     Cursor(false);         //An con tro, ham lay tu Console
+
     while(1){
+        sleep(0.1);
         xuLySuKien();
     }
     cout << endl << endl;

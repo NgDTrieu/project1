@@ -14,3 +14,4 @@ void setBackgroundColor(WORD color);
 void setColorBGTextXY(SHORT x, SHORT y, WORD color, WORD background, LPSTR str, ...);
 void Cursor(BOOL bVisible = TRUE, DWORD dwSize = 25);
 void deleteRow(SHORT SStartPos, SHORT SNumberRow);
+

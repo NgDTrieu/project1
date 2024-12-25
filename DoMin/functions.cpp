@@ -1,6 +1,7 @@
 #include "functions.h"
 #include "main.h"
 #include "Console.h"
+#include <unistd.h>
 
 CauTrucBang CTBang;
 CauTrucO **CTO;
