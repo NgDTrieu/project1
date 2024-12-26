@@ -605,7 +605,7 @@ void veMenuCapDo(short SIndex){
     STRTextMenuChinh = "  Trung Binh (Bang 16x16 va 40 boom)  ";
     setColorBGTextXY((ConsoleWidth / 2) - (strlen(STRTextMenuChinh) / 2 + 4), 8, 15, (SIndex == 1) ? 2 : 0, STRTextMenuChinh);
 
-    STRTextMenuChinh = "  Kho (Bang 24x24 vaf 99 boom)  ";
+    STRTextMenuChinh = "  Kho (Bang 24x24 va 99 boom)  ";
     setColorBGTextXY((ConsoleWidth / 2) - (strlen(STRTextMenuChinh) / 2 + 4), 9, 15, (SIndex == 2) ? 2 : 0, STRTextMenuChinh);
 
     STRTextMenuChinh = "  Thoat  ";
